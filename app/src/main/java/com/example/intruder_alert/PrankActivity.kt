@@ -52,12 +52,12 @@ class PrankActivity : androidx.fragment.app.FragmentActivity(), TextToSpeech.OnI
 
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                 // Pick a random message from the list
-                //speak(failureMessages.random())
+                speak("No finger detected")
 
                 // Don't finish immediately on error so the prank stays on screen
                 android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
                     finish()
-                }, 5000)
+                }, 2000)
             }
 
             override fun onAuthenticationFailed() {
