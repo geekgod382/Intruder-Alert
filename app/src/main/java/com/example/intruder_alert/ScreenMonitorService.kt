@@ -14,6 +14,11 @@ import androidx.core.app.NotificationCompat
 class ScreenMonitorService : Service() {
     private val CHANNELID = "prank_service_channel"
 
+    companion object {
+        var isRunning = false
+            private set // Prevents external classes from changing it directly
+    }
+
     private val screenReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == Intent.ACTION_SCREEN_ON) {
@@ -27,6 +32,7 @@ class ScreenMonitorService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        isRunning = true
         createNotificationChannel()
         val notification: Notification = NotificationCompat.Builder(this, CHANNELID)
             .setContentTitle("Intruder Alert Active")
@@ -57,6 +63,7 @@ class ScreenMonitorService : Service() {
     }
 
     override fun onDestroy() {
+        isRunning = false
         unregisterReceiver(screenReceiver)
         super.onDestroy()
     }

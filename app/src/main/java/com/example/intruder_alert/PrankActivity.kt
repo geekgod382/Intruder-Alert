@@ -10,10 +10,14 @@ import androidx.biometric.BiometricPrompt
 class PrankActivity : androidx.fragment.app.FragmentActivity(), TextToSpeech.OnInitListener {
     private lateinit var tts: TextToSpeech
     private lateinit var biometricPrompt: BiometricPrompt
+    private var savedName : String = "owner"
 
     @RequiresApi(Build.VERSION_CODES.O_MR1)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val prefs = getSharedPreferences("PrankPrefs", android.content.Context.MODE_PRIVATE)
+        savedName = prefs.getString("user_name", "owner") ?: "owner"
 
         // Ensure the activity shows over the lock screen
         setShowWhenLocked(true)
@@ -29,7 +33,7 @@ class PrankActivity : androidx.fragment.app.FragmentActivity(), TextToSpeech.OnI
         // List of funny/scary messages
         val failureMessages = listOf(
             "Identify yourself, stranger! Put the phone down!",
-            "I know you are not Manan! I am calling the police!",
+            "I know you are not $savedName! I am calling the police!",
             "Access denied! Intruders will be vaporized in five seconds.",
             "Stop touching me! You are not my owner!",
             "Alert! Alert! Unknown human detected!",
@@ -39,7 +43,7 @@ class PrankActivity : androidx.fragment.app.FragmentActivity(), TextToSpeech.OnI
         biometricPrompt = BiometricPrompt(this, executor,
         object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                speak("Welcome Manan")
+                speak("Welcome $savedName!")
                 // Use a Handler to wait 2 seconds before closing, so TTS can finish
                 android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
                     finish()
@@ -48,7 +52,7 @@ class PrankActivity : androidx.fragment.app.FragmentActivity(), TextToSpeech.OnI
 
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                 // Pick a random message from the list
-                speak(failureMessages.random())
+                //speak(failureMessages.random())
 
                 // Don't finish immediately on error so the prank stays on screen
                 android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({

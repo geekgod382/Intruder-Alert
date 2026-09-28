@@ -64,6 +64,15 @@ fun PrankControlScreen(modifier: Modifier = Modifier) {
         }
     }
 
+    var userName by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        val prefs = context.getSharedPreferences("PrankPrefs", Context.MODE_PRIVATE)
+        userName = prefs.getString("user_name", "") ?: ""
+
+        isServiceRunning = ScreenMonitorService.isRunning
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -94,9 +103,26 @@ fun PrankControlScreen(modifier: Modifier = Modifier) {
             }
         }
 
+        OutlinedTextField(
+            value = userName,
+            onValueChange = { userName = it},
+            label = { Text("Enter your name") },
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            singleLine = true
+        )
+
         // 2. Service Toggle Button
         Button(
             onClick = {
+                if (userName.isBlank()) {
+                    Toast.makeText(context, "Please enter a name first!", Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+
+                val prefs = context.getSharedPreferences("PrankPrefs", Context.MODE_PRIVATE)
+                prefs.edit().putString("user_name", userName).apply()
+
+
                 if (isServiceRunning) {
                     // Stop Service
                     val intent = Intent(context, ScreenMonitorService::class.java)
