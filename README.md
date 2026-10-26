@@ -13,4 +13,4 @@ This project was built only for fun. Not meant to be published on app stores.
 - Display over other apps
 
 ### Possible future updates
-- User name input, so that app says the user's own name
+- User name input, so that app says the user's own name (Done)
